@@ -1,6 +1,8 @@
 package onetomany.app;
 
+import onetomany.mapper.DepartmentMapper;
 import onetomany.mapper.EmployeeMapper;
+import onetomany.model.Department;
 import onetomany.model.Employee;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -17,10 +19,17 @@ public class Main {
             SqlSessionFactory factory = builder.build(is);
             SqlSession session = factory.openSession();
 
-            EmployeeMapper mapper = session.getMapper(EmployeeMapper.class);
+            DepartmentMapper mapper = session.getMapper(DepartmentMapper.class);
 
-            for(Employee em : mapper.findAllEmployeeWithDepartment2()) {
-                System.out.println(em);
+            for(Department dep : mapper.findAll2()) {
+                System.out.println(dep);
+                System.out.println("--------------------");
+                for(Employee emp : dep.getEmployees()) {
+//                    if (emp.getId() != null) {
+                        System.out.println(emp);
+//                    }
+                }
+                System.out.println("=====================");
             }
 
             session.close();

@@ -1,9 +1,13 @@
 package onetomany.model;
 
+import java.util.List;
+
 public class Department {
     private Integer id;
     private String name;
     private String description;
+
+    private List<Employee> employees;
 
     public Department(String name, String description) {
         this(null, name, description);
@@ -40,6 +44,14 @@ public class Department {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
     }
 
     @Override
