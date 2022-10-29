@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="usetypehandler.mapper.EmployeeMapper">
+    <resultMap id="emp" type="EmployeeDto">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="mobile" column="mobile" />
+    </resultMap>
+
+    <select id="findAll" resultType="Employee">
+        SELECT * FROM employee
+    </select>
+
+    <select id="findById" parameterType="map" resultType="Employee">
+        SELECT * FROM employee WHERE id=#{id}
+    </select>
+
+    <select id="findByName" parameterType="map" resultMap="emp">
+        <bind name="p_name" value="'%' || #{name} || '%'"/>
+        SELECT id, name, mobile FROM employee WHERE name LIKE #{p_name}
+    </select>
+
+    <insert id="insert" parameterType="Employee">
+        INSERT INTO employee (name, birthday, gender, mobile) VALUES (#{name}, #{birthday}, #{gender}, #{mobile})
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT last_insert_id() as id
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="Employee">
+        UPDATE employee SET name=#{name}, birthday=#{birthday}, gender=#{gender}, mobile=#{mobile}
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateMobile" parameterType="map">
+        UPDATE employee SET mobile=#{mobile}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM employee WHERE id=#{id}
+    </delete>
+</mapper>
