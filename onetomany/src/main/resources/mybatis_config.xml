@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <typeAlias type="onetomany.dto.EmployeeDto" alias="EmployeeDto" />
+        <package name="onetomany.model"/>
+    </typeAliases>
+
+    <typeHandlers>
+<!--        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler"-->
+<!--                     javaType="usetypehandler.model.Gender" />-->
+        <typeHandler handler="onetomany.type.GenderTypeHandler"
+                     javaType="onetomany.model.Gender" />
+    </typeHandlers>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis_db"/>
+                <property name="username" value="mybatis"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/EmployeeMapper.xml"/>
+    </mappers>
+</configuration>
