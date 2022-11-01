@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="manytomany.mapper.EmployeeMapper">
+    <resultMap id="emp" type="EmployeeDto">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="mobile" column="mobile" />
+    </resultMap>
+
+    <resultMap id="employee_department" type="Employee">
+        <id property="id" column="employee_id" />
+        <result property="name" column="employee_name" />
+        <result property="birthday" column="employee_birthday" />
+        <result property="gender" column="employee_gender" />
+        <result property="mobile" column="employee_mobile" />
+        <association property="department" javaType="Department">
+            <id property="id" column="department_id" />
+            <result property="name" column="department_name" />
+            <result property="description" column="department_description" />
+        </association>
+    </resultMap>
+
+    <resultMap id="employee_department2" type="Employee">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="birthday" column="birthday" />
+        <result property="gender" column="gender" />
+        <result property="mobile" column="mobile" />
+        <association property="department" column="department_id"
+                     javaType="Department" select="findDepartmentById">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="description" column="description" />
+        </association>
+    </resultMap>
+
+    <select id="findAllEmployeeWithDepartment" resultMap="employee_department">
+        SELECT e.id as employee_id, e.name as employee_name, e.birthday as employee_birthday,
+        e.gender as employee_gender, e.mobile as employee_mobile, e.department_id as department_id,
+        d.name as department_name, d.description as department_description
+        FROM employee e LEFT JOIN department d ON e.department_id = d.id
+    </select>
+
+    <select id="findAllEmployeeWithDepartment2" resultMap="employee_department2">
+        SELECT * FROM employee
+    </select>
+
+    <select id="findDepartmentById" parameterType="int" resultType="Department">
+        SELECT * FROM department WHERE id=#{id}
+    </select>
+
+    <select id="findAll" resultType="Employee">
+        SELECT * FROM employee
+    </select>
+
+    <select id="findById" parameterType="map" resultType="Employee">
+        SELECT * FROM employee WHERE id=#{id}
+    </select>
+
+    <select id="findByName" parameterType="map" resultMap="emp">
+        <bind name="p_name" value="'%' || #{name} || '%'"/>
+        SELECT id, name, mobile FROM employee WHERE name LIKE #{p_name}
+    </select>
+
+    <insert id="insert" parameterType="Employee">
+        INSERT INTO employee (name, birthday, gender, mobile) VALUES (#{name}, #{birthday}, #{gender}, #{mobile})
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT last_insert_id() as id
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="Employee">
+        UPDATE employee SET name=#{name}, birthday=#{birthday}, gender=#{gender}, mobile=#{mobile}
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateMobile" parameterType="map">
+        UPDATE employee SET mobile=#{mobile}
+        WHERE id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM employee WHERE id=#{id}
+    </delete>
+</mapper>

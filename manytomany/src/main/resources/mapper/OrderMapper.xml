@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="manytomany.mapper.OrderMapper">
+    <resultMap id="order" type="Order">
+        <id property="id" column="id" />
+        <result property="receiver" column="receiver" />
+        <result property="address" column="address" />
+        <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <resultMap id="order_product" type="Order" extends="order">
+        <collection property="products" ofType="Product">
+            <id property="id" column="p_id" />
+            <result property="name" column="p_name" />
+            <result property="count" column="p_count" />
+            <result property="price" column="p_price" />
+        </collection>
+    </resultMap>
+
+    <select id="findById" parameterType="map" resultMap="order_product">
+        SELECT o.id as id, o.receiver as receiver, o.address as address, o.create_time as create_time,
+        p.id as p_id, p.name as p_name, p.count as p_count, p.price as p_price
+        FROM `order` o INNER JOIN order_product op ON op.order_id = o.id
+        INNER JOIN product p ON op.product_id = p.id
+        WHERE o.id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="Order">
+        INSERT INTO `order` (receiver, address, create_time) VALUES (#{receiver}, #{address}, #{createTime})
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT last_insert_id() as id
+        </selectKey>
+    </insert>
+
+    <insert id="insertOrderProduct" parameterType="map">
+        INSERT INTO `order_product` (order_id, product_id) VALUES (#{orderId}, #{productId})
+    </insert>
+</mapper>

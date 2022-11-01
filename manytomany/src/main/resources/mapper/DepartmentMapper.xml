@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="manytomany.mapper.DepartmentMapper">
+    <resultMap id="department" type="Department">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="description" column="description" />
+    </resultMap>
+
+    <resultMap id="department_employees" type="Department" extends="department">
+        <collection property="employees" ofType="Employee">
+            <id property="id" column="employee_id" />
+            <result property="name" column="employee_name" />
+            <result property="birthday" column="employee_birthday" />
+            <result property="gender" column="employee_gender" />
+            <result property="mobile" column="employee_mobile" />
+        </collection>
+    </resultMap>
+
+    <resultMap id="department_employees2" type="Department" extends="department">
+        <collection property="employees" ofType="Employee" column="id" select="findEmployeeByDepartment">
+        </collection>
+    </resultMap>
+
+    <select id="findAll" resultMap="department_employees">
+        SELECT d.id as id, d.name as name, d.description as description,
+        e.id as employee_id, e.name as employee_name, e.birthday as employee_birthday,
+        e.gender as employee_gender, e.mobile as employee_mobile
+        FROM department d LEFT JOIN employee e ON e.department_id = d.id
+    </select>
+
+    <select id="findAll2" resultMap="department_employees2">
+        SELECT * FROM department
+    </select>
+
+    <select id="findEmployeeByDepartment" parameterType="int" resultType="Employee">
+        SELECT * FROM employee WHERE department_id = #{id}
+    </select>
+</mapper>

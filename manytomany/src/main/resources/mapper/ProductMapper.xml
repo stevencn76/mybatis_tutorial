@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="manytomany.mapper.ProductMapper">
+    <insert id="insert" parameterType="Product">
+        INSERT INTO product (name, count, price) VALUES (#{name}, #{count}, #{price})
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT last_insert_id() as id
+        </selectKey>
+    </insert>
+
+</mapper>
